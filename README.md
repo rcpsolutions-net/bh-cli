@@ -1,10 +1,5 @@
-Of course. Here is a complete build strategy for creating a Node.js CLI to interact with the Bullhorn REST API. This strategy is based on a thorough review of their official API documentation.
-
----
-
-# Build Strategy: The Bullhorn CLI (`bh`)
-
-This document outlines a comprehensive strategy for building a command-line interface (CLI) tool in Node.js v22 to interact with the Bullhorn REST API. The goal is to create a powerful, user-friendly tool for developers and administrators to extract data and perform actions on Bullhorn entities.
+## RCP Solutions LLC Bullhorn CLI tool
+### Lawrence Ham 
 
 ## 1. Research Findings & Core API Concepts
 
