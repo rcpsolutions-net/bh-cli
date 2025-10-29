@@ -40,9 +40,12 @@ export async function login({ username, password, clientId, clientSecret }) {
         maxRedirects: 0 // Prevent axios from following the redirect
       });
     } catch (error) {
+
+      console.log(error)
       if (error.response && error.response.status === 302) {
         const location = error.response.headers.location;
         const urlParams = new URLSearchParams(new URL(location).search);
+        
         authorizationCode = urlParams.get('code');
       } else {
         throw error;
