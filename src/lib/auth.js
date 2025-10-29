@@ -13,7 +13,11 @@ export async function login({ username, password, clientId, clientSecret }) {
     spinner.text = 'Step 1 of 4: Determining data center...';
     const loginInfoUrl = `https://rest.bullhornstaffing.com/rest-services/loginInfo?username=${username}`;
     const loginInfoResponse = await axios.get(loginInfoUrl);
+
+
     const loginData = loginInfoResponse.data;
+
+    console.log('Login Info Response:', loginData);
 
     const authorizeUrl = `${loginData.oauthUrl}/authorize`;
     const tokenUrl = `${loginData.oauthUrl}/token`;
@@ -38,19 +42,21 @@ export async function login({ username, password, clientId, clientSecret }) {
     
     let authorizationCode;
     try {
+
+      console.log('Requesting authorization code with params to authorizeUrl:', authorizeUrl, authCodeParams.toString());
       await axios.get(`${authorizeUrl}?${authCodeParams.toString()}`, {
         maxRedirects: 0 // Prevent axios from following the redirect
       });
     } catch (error) {
 
-      console.log(error)
+      //console.log(error)
       if (error.response && error.response.status === 302) {
         const location = error.response.headers.location;
         const urlParams = new URLSearchParams(new URL(location).search);
         
         authorizationCode = urlParams.get('code');
       } else {
-        //throw error;
+         throw error;
       }
     }
 
