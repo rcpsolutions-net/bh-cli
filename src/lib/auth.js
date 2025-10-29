@@ -19,6 +19,8 @@ export async function login({ username, password, clientId, clientSecret }) {
     const tokenUrl = `${loginData.oauthUrl}/token`;
     const apiLoginUrl = loginData.restUrl; // This is the base for the final login call
 
+    console.log('Login Info Response:', loginData);
+
     if (!loginData.oauthUrl || !loginData.restUrl) {
       console.log('Received loginInfo:', loginData);
       throw new Error('Failed to construct necessary auth URLs from loginInfo response. Missing oauthUrl or restUrl.');
@@ -48,12 +50,12 @@ export async function login({ username, password, clientId, clientSecret }) {
         
         authorizationCode = urlParams.get('code');
       } else {
-        throw error;
+        //throw error;
       }
     }
 
     if (!authorizationCode) {
-      throw new Error('Failed to obtain an authorization code. Please check your username and password.');
+      //throw new Error('Failed to obtain an authorization code. Please check your username and password.');
     }
     
     // --- Step 3: Exchange Authorization Code for an Access Token ---
