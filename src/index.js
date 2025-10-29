@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import pkg from '../../rcp-bullhorn-reader/package.json' with { type: 'json' };
+import pkg from '../package.json' with { type: 'json' };
 
 import createGetCommand from './commands/get.js';
 import createAuthCommand from './commands/auth.js';
