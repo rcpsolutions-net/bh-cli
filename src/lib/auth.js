@@ -36,17 +36,17 @@ export async function login({ username, password, clientId, clientSecret }) {
       client_id: clientId,
       response_type: 'code',
       action: 'Login',
-      username,
-      password,
+      username,      
     });
     
-    console.log(authCodeParams.toString());
+    authCodeParams.append('password', password);
+
     let authorizationCode;
     try {
 
       const uri = authorizeUrl + '?' + authCodeParams.toString();
       console.log('Requesting authorization code with params to authorizeUrl:', uri);      
-      await axios.get(`${encodeURI(uri)}`, {
+      await axios.get(`${uri}`, {
         maxRedirects: 0 // Prevent axios from following the redirect
       });
     } catch (error) {
