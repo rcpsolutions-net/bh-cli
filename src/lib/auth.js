@@ -46,7 +46,7 @@ export async function login({ username, password, clientId, clientSecret }) {
 
       const uri = authorizeUrl + '?' + authCodeParams.toString();
       console.log('Requesting authorization code with params to authorizeUrl:', uri);      
-      await axios.get(`${uri}`, {
+      await axios.get(`${encodeURI(uri)}`, {
         maxRedirects: 0 // Prevent axios from following the redirect
       });
     } catch (error) {
