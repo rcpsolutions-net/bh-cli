@@ -45,6 +45,7 @@ export async function login({ username, password, clientId, clientSecret }) {
     try {
 
       const uri = authorizeUrl + '?' + authCodeParams.toString();
+
       console.log('Requesting authorization code with params to authorizeUrl:', uri);      
       await axios.get(`${uri}`, {
         maxRedirects: 0 // Prevent axios from following the redirect
@@ -55,7 +56,7 @@ export async function login({ username, password, clientId, clientSecret }) {
       if (error.response && error.response.status === 302) {
         const location = error.response.headers.location;
         const urlParams = new URLSearchParams(new URL(location).search);
-        
+        console.log(urlParams);
         authorizationCode = urlParams.get('code');
       } else {
          throw error;
@@ -63,7 +64,7 @@ export async function login({ username, password, clientId, clientSecret }) {
     }
 
     if (!authorizationCode) {
-      //throw new Error('Failed to obtain an authorization code. Please check your username and password.');
+      throw new Error('Failed to obtain an authorization code. Please check your username and password.');
     }
     
     // --- Step 3: Exchange Authorization Code for an Access Token ---
