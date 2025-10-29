@@ -20,6 +20,7 @@ export async function login({ username, password, clientId, clientSecret }) {
     const apiLoginUrl = loginData.restUrl; // This is the base for the final login call
 
     if (!loginData.oauthUrl || !loginData.restUrl) {
+      console.log('Received loginInfo:', loginData);
       throw new Error('Failed to construct necessary auth URLs from loginInfo response. Missing oauthUrl or restUrl.');
     }
 
