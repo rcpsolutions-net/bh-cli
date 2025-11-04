@@ -1,5 +1,3 @@
-// src/index.js
-
 import { Command } from 'commander';
 import chalk from 'chalk';
 import pkg from '../package.json' with { type: 'json' };
