@@ -43,13 +43,15 @@ export default function createQueryCommand() {
     .action(async (entityType, options) => {
       const spinner = ora(`Querying for ${entityType} records...`).start();
 
+      console.log(options)
+
       try {
         const url = `/query/${entityType}`;
         const params = {
           where: options.where,
           fields: options.fields,
-          count: options.count,
-          start: options.start,
+          count: options.count || 15,
+          start: options.start || 0,
         };
 
         // Only add the orderBy parameter if the user provided it
@@ -57,7 +59,7 @@ export default function createQueryCommand() {
           params.orderBy = options.orderBy;
         }
 
-        const response = await api.post(url, { params });
+        const response = await api.get(url, { params });
         const records = response.data.data;
 
         if (!records || records.length === 0) {
