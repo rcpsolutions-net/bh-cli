@@ -26,15 +26,13 @@ const api = axios.create({
   },
 });
 
-// --- AXIOS INTERCEPTOR FOR TOKEN REFRESH ---
 api.interceptors.response.use(
   (response) => response, // On success, just pass the response through
   async (error) => {
     const originalRequest = error.config;
 
-    // Check if the error is a 401 and we haven't already retried this request
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Mark this request to prevent infinite loops
+      originalRequest._retry = true; 
 
       try {
         const newBhRestToken = await handleTokenRefresh();

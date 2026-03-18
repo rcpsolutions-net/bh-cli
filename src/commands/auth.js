@@ -40,13 +40,13 @@ export default function createAuthCommand() {
         {
           type: 'input',
           name: 'clientId',
-          default: process.env.BH_API_CLIENT_ID || 'jgjgjgjg-fd-dfasfdsafsa',
+          default: process.env.BH_API_CLIENT_ID || 'bh-api-client-id-not-set',
           message: 'Enter your Bullhorn API Client ID:',
         },
         {
           type: 'password',
           name: 'clientSecret',
-          default: process.env.BH_API_CLIENT_SECRET || 'KDFGJKLAJSALDF9jf4r8',
+          default: process.env.BH_API_CLIENT_SECRET || 'bh-api-client-secret-not-set',
           message: 'Enter your Bullhorn API Client Secret:',
           mask: '*',
         },
