@@ -1,152 +1,186 @@
-## RCP Solutions LLC Bullhorn CLI tool
-### Lawrence Ham 
+# bh-cli
 
-## 1. Research Findings & Core API Concepts
+A command-line interface for interacting with the [Bullhorn REST API](https://bullhorn.github.io/rest-api-docs/). Fetch, search, query, create, update, and delete Bullhorn entities directly from your terminal.
 
-A review of the [Bullhorn REST API Documentation](https://bullhorn.github.io/rest-api-docs/) reveals several key concepts that will dictate our application's architecture.
+## Requirements
 
-### a. Authentication: OAuth 2.0
-*   **Method:** Bullhorn uses OAuth 2.0. For a CLI, the **Password Grant Flow** is the most practical approach. While the documentation cautions against it for third-party apps, it is suitable for a trusted, first-party tool where the user is directly providing their credentials to their own machine.
-*   **Process:**
-    1.  User provides Username, Password, Client ID, and Client Secret.
-    2.  The CLI makes a `POST` request to `https://auth.bullhornstaffing.com/oauth/token` with these credentials.
-    3.  The API returns an `access_token` (called `BhRestToken`), a `refresh_token`, and, crucially, a `restUrl`.
-*   **Key Challenge:** The `restUrl` is dynamic (e.g., `https://rest{swimlane}.bullhornstaffing.com/rest-services/{corpToken}/`). It is **not** a static URL. All subsequent API calls must use this `restUrl` as their base.
-*   **Token Management:** The `BhRestToken` expires. The CLI must securely store the `BhRestToken`, `restUrl`, and `refresh_token` and use the `refresh_token` to get a new session when the old one expires.
+- Node.js >= 22.0.0
+- Bullhorn account with API credentials (Client ID and Client Secret)
 
-### b. API Interaction
-*   **Entities:** The API is structured around entities like `Candidate`, `JobOrder`, `ClientContact`, `Placement`, etc. These will map directly to our CLI commands.
-*   **Standard Operations:**
-    *   **GET `/entity/{EntityType}/{id}`:** Fetch a single record.
-    *   **POST `/entity/{EntityType}`:** Create a new record.
-    *   **POST `/entity/{EntityType}/{id}`:** Update an existing record. (Note: Bullhorn uses POST for updates, not PUT/PATCH).
-    *   **DELETE `/entity/{EntityType}/{id}`:** Delete a record.
-*   **Data Extraction (Search & Query):**
-    *   **GET `/search/{EntityType}` or `/query/{EntityType}`:** These are the most powerful endpoints for extraction. The `search` endpoint is generally preferred as it supports more complex queries.
-    *   **Parameters:** Critical query parameters include `fields` (to specify which fields to return), `where` (for filtering using Lucene-like syntax), `count`, and `start` (for pagination).
+## Installation
 
-## 2. Technology Stack
-
-We will use modern, well-supported Node.js libraries to build a robust and maintainable CLI.
-
-*   **Core:** Node.js v22
-*   **Command Framework:** [**Commander.js**](https://github.com/tj/commander.js) - A complete and popular solution for building complex command-line interfaces.
-*   **HTTP Client:** [**Axios**](https://axios-http.com/) - Promise-based HTTP client for making requests to the Bullhorn API. Its interceptors are perfect for handling authentication and token refreshing automatically.
-*   **Configuration Management:** [**Conf**](https://github.com/sindresorhus/conf) - For securely storing user credentials and session tokens in the appropriate user-level config directory for each OS (e.g., `~/.config/` on Linux). This is far superior to `.env` files for a distributable CLI.
-*   **User Interaction:** [**Inquirer**](https://github.com/SBoudrias/Inquirer.js) - For creating interactive prompts, essential for the `login` command.
-*   **CLI UX/UI:**
-    *   [**Chalk**](https://github.com/chalk/chalk) - For adding color and style to terminal output, improving readability.
-    *   [**Ora**](https://github.com/sindresorhus/ora) - To display elegant spinners during long-running operations like API calls.
-*   **Data Formatting:** [**console.table**](https://developer.mozilla.org/en-US/docs/Web/API/console/table) (built-in) or a more advanced library like `cli-table3` for displaying search results in a clean, tabular format.
-
-## 3. Project Structure
-
-A modular structure will keep the codebase organized and scalable.
-
-```
-bullhorn-cli/
-├── bin/
-│   └── bh.js             # The executable entry point.
-├── src/
-│   ├── commands/         # Each command gets its own file.
-│   │   ├── login.js
-│   │   ├── get.js
-│   │   ├── search.js
-│   │   └── create.js
-│   ├── lib/              # Core logic and helpers.
-│   │   ├── api.js        # The Axios-based API client wrapper.
-│   │   ├── auth.js       # Handles the entire auth and token refresh flow.
-│   │   └── config.js     # Manages the `conf` store.
-│   └── index.js          # Main Commander.js setup, ties commands together.
-├── package.json
-└── README.md
+```bash
+git clone <repo-url>
+cd bh-cli
+npm install
+npm link
 ```
 
-## 4. Proposed Command Structure & User Experience (UX)
+After linking, the `bullhorn` command will be available globally.
 
-The CLI will be invoked as `bh`. The structure should be intuitive and REST-like.
+## Setup
 
-**`bh <command> <subcommand> [args] [options]`**
+Authenticate to create a local session:
 
-*   **Authentication:**
-    *   `bh login`: Prompts the user interactively for their credentials and stores the session.
-    *   `bh logout`: Clears the stored credentials and session.
-    *   `bh status`: Checks if the user is logged in and displays session info.
+```bash
+bullhorn auth login
+```
 
-*   **Read Operations (Data Extraction):**
-    *   `bh get <entityType> <entityId>`: Fetches a single entity.
-        *   _Example:_ `bh get Candidate 12345 --fields="id,name,email"`
-        *   _Example:_ `bh get JobOrder 54321 -o json` (output as raw JSON)
-    *   `bh search <entityType>`: Searches for entities based on a query.
-        *   _Example:_ `bh search Candidate --where="isDeleted:0 AND name:John*"`
-        *   _Example:_ `bh search JobOrder --fields="id,title,isOpen" --count=20 --sort="title"`
+You'll be prompted for your Bullhorn username, password, Client ID, and Client Secret. On success, the session token and REST URL are stored locally for all subsequent commands.
 
-*   **Write Operations:**
-    *   `bh create <entityType> --<field>="<value>"`: Creates a new entity.
-        *   _Example:_ `bh create Candidate --firstName="Jane" --lastName="Doe" --email="jane.doe@example.com"`
-    *   `bh update <entityType> <entityId> --<field>="<value>"`: Updates an entity.
-        *   _Example:_ `bh update Candidate 12345 --email="new.email@example.com"`
-    *   `bh delete <entityType> <entityId>`: Deletes an entity.
-        *   _Example:_ `bh delete Note 98765 --force`
+Optionally, set default credentials via environment variables to pre-fill the login prompts:
 
-## 5. Phased Development Plan
+```env
+BH_USER_NAME=your_username
+BH_USER_PASSWORD=your_password
+BH_API_CLIENT_ID=your_client_id
+BH_API_CLIENT_SECRET=your_client_secret
+```
 
-We will build the CLI in logical, iterative phases.
+## Commands
 
-### Phase 1: The Foundation - Authentication & Configuration
+### Authentication
 
-**Goal:** Establish a persistent, authenticated session with the Bullhorn API. This is the bedrock of the entire application.
+```bash
+bullhorn auth login    # Authenticate and save session
+bullhorn auth logout   # Clear stored credentials
+bullhorn auth status   # Show current session status
+```
 
-1.  **Setup Project:** Initialize the Node.js project, install base dependencies (`commander`, `axios`, `conf`, `inquirer`, `chalk`).
-2.  **Config Store:** Implement `src/lib/config.js` using `conf` to create a schema for storing `BhRestToken`, `restUrl`, `refreshToken`, etc.
-3.  **Login Command:** Build the `bh login` command in `src/commands/login.js`. It will use `inquirer` to prompt for username, password, client ID, and secret.
-4.  **Auth Logic:** Implement `src/lib/auth.js` to handle the OAuth token request. On success, it will save the tokens and `restUrl` to the config store.
-5.  **API Client:** Create the initial `src/lib/api.js`. This module will configure a global Axios instance. It should:
-    *   Read the `restUrl` and `BhRestToken` from the config store.
-    *   Automatically set the `baseURL` to `restUrl`.
-    *   Add an `Authorization` header with the `BhRestToken` to every request.
+### Get
 
-### Phase 2: Core Read Operations - "Extract"
+Fetch a single entity record by ID.
 
-**Goal:** Deliver the primary user value: extracting data from Bullhorn.
+```bash
+bullhorn get <entityType> <entityId> [options]
 
-1.  **`get` Command:** Implement `bh get <entity> <id>`. This command will use the configured Axios client to make a simple GET request. It should handle displaying the result, potentially as formatted JSON.
-2.  **`search` Command:** Implement `bh search <entity>`. This is the most important command.
-    *   Parse options for `fields`, `where`, `count`, `start`, and `sort`.
-    *   Construct the query parameters and make the request.
-    *   Implement output formatting. By default, use `console.table` for a clean view. Add an `--output json` (or `-o json`) flag to dump the raw JSON response.
-3.  **Add UX Polish:** Integrate `ora` spinners to show activity while the API calls are in flight. Use `chalk` for colored success/error messages.
+Options:
+  -f, --fields <list>    Comma-separated fields to return (default: all)
+  -o, --output <format>  Output format: table or json (default: table)
+```
 
-### Phase 3: Write Operations - "Perform Other Actions"
+```bash
+bullhorn get Candidate 12345
+bullhorn get JobOrder 54321 --fields="id,title,isOpen" -o json
+```
 
-**Goal:** Enable users to create, update, and delete data.
+### Search
 
-1.  **`create` Command:** Implement `bh create <entity>`. This command will need to dynamically build a request body from the provided flags (e.g., `--firstName="John"`).
-2.  **`update` Command:** Implement `bh update <entity> <id>`. Similar to `create`, it will build a request body from flags.
-3.  **`delete` Command:** Implement `bh delete <entity> <id>`. This is a straightforward DELETE request. Add a `--force` flag or an interactive confirmation prompt to prevent accidental deletions.
+Search for records using a [Lucene query](https://lucene.apache.org/core/2_9_4/queryparsersyntax.html).
 
-### Phase 4: Advanced Features & Refinements
+```bash
+bullhorn search <entityType> [options]
 
-**Goal:** Make the tool more robust and powerful.
+Options:
+  -q, --query <lucene>   Lucene query string (required)
+  -f, --fields <list>    Comma-separated fields to return (default: id,name)
+  -c, --count <n>        Records per page (default: 15)
+      --start <n>        Pagination offset (default: 0)
+  -s, --sort <field>     Sort field, prefix with - for descending
+  -o, --output <format>  Output format: table or json (default: table)
+```
 
-1.  **Automatic Token Refresh:** Enhance the Axios client in `src/lib/api.js`. Use Axios interceptors to catch 401 Unauthorized errors. When a 401 occurs, the interceptor should:
-    *   Pause the original request.
-    *   Use the stored `refresh_token` to get a new `BhRestToken`.
-    *   Update the config store with the new token.
-    *   Retry the original, failed request with the new token.
-2.  **Complex Input:** For `create` and `update`, add a `--from-file <path.json>` option to allow passing complex JSON objects as the request body.
-3.  **Global Error Handling:** Implement a centralized error handler that catches API errors and displays them to the user in a friendly format.
-4.  **Help & Documentation:** Ensure every command and option has thorough help text using Commander's `.description()` and `.option()` methods.
+```bash
+bullhorn search Candidate -q "isDeleted:0 AND name:John*" -c 20
+bullhorn search JobOrder -q "isOpen:1" --fields="id,title,dateAdded" -s "-dateAdded"
+```
 
-### Phase 5: Packaging & Distribution
+### Query
 
-**Goal:** Make the CLI easily installable for end-users.
+Query records using a SQL-like WHERE clause.
 
-1.  **Executable Script:** In `bin/bh.js`, add the shebang `#!/usr/bin/env node`.
-2.  **`package.json`:**
-    *   Add a `bin` field: `"bin": { "bh": "./bin/bh.js" }`.
-    *   Add `"type": "module"` to use ES Module syntax.
-3.  **Local Installation:** Users can `npm link` the project during development to test the `bh` command globally.
-4.  **Publishing:** The package can be published to a private or public NPM registry, allowing users to install it via `npm install -g bullhorn-cli`.
+```bash
+bullhorn query <entityType> [options]
 
-This comprehensive strategy provides a clear roadmap from initial research to a fully-featured, distributable CLI tool for the Bullhorn REST API.
+Options:
+  -w, --where <clause>   SQL WHERE clause (required)
+  -f, --fields <list>    Comma-separated fields to return (default: id)
+  -c, --count <n>        Records per page (default: 15)
+      --start <n>        Pagination offset (default: 0)
+      --orderBy <field>  Sort field (e.g. "name DESC")
+  -o, --output <format>  Output format: table or json (default: table)
+```
+
+```bash
+bullhorn query Candidate -w "id > 100 AND isDeleted = false" --orderBy "lastName ASC"
+```
+
+### Create
+
+Create a new entity record using `key=value` pairs.
+
+```bash
+bullhorn create <entityType> <fields...>
+```
+
+```bash
+bullhorn create Candidate firstName="Jane" lastName="Doe" email="jane@example.com"
+```
+
+### Update
+
+Update an existing entity record by ID.
+
+```bash
+bullhorn update <entityType> <entityId> <fields...>
+```
+
+```bash
+bullhorn update Candidate 12345 email="new@example.com" status="Active"
+```
+
+### Delete
+
+Delete an entity record by ID.
+
+```bash
+bullhorn delete <entityType> <entityId> [options]
+
+Options:
+  -f, --force  Skip confirmation prompt
+```
+
+```bash
+bullhorn delete Note 98765 --force
+```
+
+### Meta
+
+Get field definitions and type metadata for an entity.
+
+```bash
+bullhorn meta <entityType> [options]
+
+Options:
+  -f, --fields <list>    Fields to get metadata for (default: all)
+  -o, --output <format>  Output format: table or json (default: table)
+```
+
+```bash
+bullhorn meta Candidate
+bullhorn meta JobOrder -o json
+```
+
+### Entities
+
+Display a flowchart of major Bullhorn entities and their relationships.
+
+```bash
+bullhorn entities
+```
+
+## Configuration
+
+After login, the session is persisted locally via [`conf`](https://github.com/sindresorhus/conf). Sessions are automatically refreshed on expiry — no need to re-login frequently.
+
+| Platform | Path                                          |
+|----------|-----------------------------------------------|
+| Linux    | `~/.config/bh-cli/config.json`                |
+| macOS    | `~/Library/Preferences/bh-cli/config.json`    |
+| Windows  | `%APPDATA%\bh-cli\config.json`                |
+
+The stored config contains your `BhRestToken`, `restUrl`, and `refreshToken`. Treat this file as sensitive.
+
+## License
+
+MIT

@@ -5,12 +5,12 @@
   "main": "src/index.js",
   "type": "module",
   "bin": {
-    "bh": "bin/bh.js"
+    "bullhorn": "bin/bullhorn.js"
   },
   "scripts": {
     "start": "node src/index.js"
   },
-  "author": "rcpsolutions-net",
+  "author": "Lawrence Ham",
   "license": "MIT",
   "engines": {
     "node": ">=22.0.0"

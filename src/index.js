@@ -15,7 +15,7 @@ import createQueryCommand from './commands/query.js';
 const program = new Command();
 
 program
-  .name('bh')
+  .name('bullhorn')
   .version(pkg.version)
   .description(chalk.cyan.bold(pkg.description));
 
