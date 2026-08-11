@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
+import Table from 'cli-table3';
 import api from '../lib/api.js';
 
 /**
@@ -70,8 +71,17 @@ export default function createSearchCommand() {
         if (options.output === 'json') {
           console.log(JSON.stringify(records, null, 2));
         } else {
-          // console.table is perfect for an array of objects
-          console.table(records);
+          const headers = Object.keys(records[0] || {});
+          const table = new Table({
+            head: headers.map(h => chalk.cyan.bold(h)),
+          });
+          for (const record of records) {
+            table.push(headers.map(h => {
+              const val = record[h];
+              return typeof val === 'object' && val !== null ? JSON.stringify(val) : String(val ?? '');
+            }));
+          }
+          console.log(table.toString());
         }
       } catch (error) {
         spinner.fail(chalk.red('Search request failed.'));

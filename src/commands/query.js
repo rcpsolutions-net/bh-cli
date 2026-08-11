@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
+import Table from 'cli-table3';
 import api from '../lib/api.js';
 
 /**
@@ -43,8 +44,6 @@ export default function createQueryCommand() {
     .action(async (entityType, options) => {
       const spinner = ora(`Querying for ${entityType} records...`).start();
 
-      console.log(options)
-
       try {
         const url = `/query/${entityType}`;
         const params = {
@@ -72,7 +71,17 @@ export default function createQueryCommand() {
         if (options.output === 'json') {
           console.log(JSON.stringify(records, null, 2));
         } else {
-          console.table(records);
+          const headers = Object.keys(records[0] || {});
+          const table = new Table({
+            head: headers.map(h => chalk.cyan.bold(h)),
+          });
+          for (const record of records) {
+            table.push(headers.map(h => {
+              const val = record[h];
+              return typeof val === 'object' && val !== null ? JSON.stringify(val) : String(val ?? '');
+            }));
+          }
+          console.log(table.toString());
         }
       } catch (error) {
         spinner.fail(chalk.red('Query request failed.'));

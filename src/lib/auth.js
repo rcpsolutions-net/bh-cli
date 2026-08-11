@@ -17,16 +17,11 @@ export async function login({ username, password, clientId, clientSecret }) {
 
     const loginData = loginInfoResponse.data;
 
-    console.log('Login Info Response:', loginData);
-
     const authorizeUrl = `${loginData.oauthUrl}/authorize`;
     const tokenUrl = `${loginData.oauthUrl}/token`;
     const apiLoginUrl = loginData.restUrl; // This is the base for the final login call
 
-    console.log('Login Info Response:', loginData);
-
     if (!loginData.oauthUrl || !loginData.restUrl) {
-      console.log('Received loginInfo:', loginData);
       throw new Error('Failed to construct necessary auth URLs from loginInfo response. Missing oauthUrl or restUrl.');
     }
 
@@ -45,8 +40,7 @@ export async function login({ username, password, clientId, clientSecret }) {
     try {
 
       const uri = authorizeUrl + '?' + authCodeParams.toString();
-
-      console.log('Requesting authorization code with params to authorizeUrl:', uri);      
+      
       await axios.get(`${uri}`, {
         maxRedirects: 0 // Prevent axios from following the redirect
       });
@@ -56,7 +50,6 @@ export async function login({ username, password, clientId, clientSecret }) {
       if (error.response && error.response.status === 302) {
         const location = error.response.headers.location;
         const urlParams = new URLSearchParams(new URL(location).search);
-        console.log(urlParams);
         authorizationCode = urlParams.get('code');
       } else {
          throw error;

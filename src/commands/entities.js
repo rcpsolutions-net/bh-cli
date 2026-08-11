@@ -20,31 +20,37 @@ export default function createEntitiesCommand() {
     const flowchart = `
 ${header('Bullhorn Core Entity Flowchart')}
 
-                  ${entity('[ ClientCorporation ]')}
-                      ${relationship('(The Company)')}
-                            ${relationship('|')}
-                            ${relationship('| has...')}
-                            ${relationship('|')}
-                  ${relationship('+-----------------+')}
-                  ${relationship('|')}                 ${relationship('|')}
-        ${entity('[ ClientContact ]')}       ${entity('[ JobOrder ]')}
-         ${relationship('(Contact Person)')}        ${relationship('(Job Opening)')}
-                  ${relationship('|')}                 ${relationship('|')}
-                  ${relationship('| opens...')}          ${relationship('| is submitted to...')}
-                  ${relationship('+-----------------+')}
-                                      ${relationship('|')}
-                                      ${relationship('|')}
-                               ${entity('[ JobSubmission ]')}
-                                 ${relationship('(Application)')}
-                                ${relationship('/')}            ${relationship('\\')}
-                               ${relationship('/')}              ${relationship('\\ is for...')}
-                              ${relationship('/')}                ${relationship('\\')}
-                             ${relationship('/')}                  ${relationship('\\')}
-              ${entity('[ Candidate ]')}                 ${relationship('... and results in a...')}
-              ${relationship('(The Person)')}                        ${relationship('|')}
-                                                  ${relationship('|')}
-                                            ${entity('[ Placement ]')}
-                                               ${relationship('(A Hire)')}
+                  ┌─────────────────────────┐
+                  │    ${entity('ClientCorporation')}    │
+                  │      ${relationship('(The Company)')}      │
+                  └────────────┬────────────┘
+                               │
+                               │ has...
+                               ▼
+                  ┌────────────┴────────────┐
+                  │                         │
+                  ▼                         ▼
+        ┌──────────────────────┐  ┌──────────────────────┐
+        │    ${entity('ClientContact')}     │  │       ${entity('JobOrder')}       │
+        │   ${relationship('(Contact Person)')}   │  │    ${relationship('(Job Opening)')}     │
+        └──────────┬───────────┘  └──────────┬───────────┘
+                   │                         │
+                   │ opens...                │ is submitted to...
+                   └────────────┬────────────┘
+                                │
+                                ▼
+                       ┌───────────────────┐
+                       │   ${entity('JobSubmission')}   │
+                       │   ${relationship('(Application)')}   │
+                       └─────┬───────┬─────┘
+                             │       │
+                 is for...   │       │   results in...
+              ┌──────────────┘       └──────────────┐
+              ▼                                     ▼
+      ┌────────────────┐                    ┌────────────────┐
+      │   ${entity('Candidate')}    │                    │   ${entity('Placement')}    │
+      │  ${relationship('(The Person)')}  │                    │    ${relationship('(A Hire)')}    │
+      └────────────────┘                    └────────────────┘
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

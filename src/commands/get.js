@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
+import Table from 'cli-table3';
 import api from '../lib/api.js';
 
 /**
@@ -43,12 +44,16 @@ export default function createGetCommand() {
         } else {
           // 'table' output for a single object
           console.log(chalk.cyan.bold(`\nDetails for ${entityType} ${entityId}:\n`));
-          // Format the single object into an array of key-value pairs for console.table
-          const formattedData = Object.entries(record).map(([key, value]) => ({
-            Field: chalk.bold(key),
-            Value: typeof value === 'object' && value !== null ? JSON.stringify(value) : value,
-          }));
-          console.table(formattedData);
+          const table = new Table({
+            head: [chalk.cyan.bold('Field'), chalk.cyan.bold('Value')],
+          });
+          for (const [key, value] of Object.entries(record)) {
+            table.push([
+              chalk.bold(key),
+              typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value ?? '')
+            ]);
+          }
+          console.log(table.toString());
         }
       } catch (error) {
         spinner.fail(chalk.red('Failed to fetch record.'));
