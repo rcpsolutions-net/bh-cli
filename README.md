@@ -169,6 +169,133 @@ Display a flowchart of major Bullhorn entities and their relationships.
 bullhorn entities
 ```
 
+### Service
+
+Interact with Bullhorn REST API business services (such as `DirectDepositAccount`).
+
+#### Direct Deposit (`direct-deposit` / `DirectDepositAccount` / `dd`)
+
+Manage candidate direct deposit accounts via `/services/DirectDepositAccount`.
+
+##### Update accounts via JSON file:
+
+```bash
+bullhorn service direct-deposit update 4152400 --file accounts.json
+```
+
+Where `accounts.json` contains either the full payload:
+
+```json
+{
+  "candidate": {
+    "id": 4152400
+  },
+  "directDepositAccounts": [
+    {
+      "amount": 1000,
+      "remainder": false,
+      "currencyUnit": {
+        "id": 166,
+        "minorUnits": 0
+      },
+      "bankName": "Chase Bank",
+      "accountNumber": "111",
+      "transitNumber": "021000021",
+      "directDepositAccountTypeLookup": {
+        "id": 1,
+        "label": "Checking"
+      },
+      "paymentOrder": 1
+    },
+    {
+      "amount": 500,
+      "remainder": false,
+      "currencyUnit": {
+        "id": 166,
+        "minorUnits": 0
+      },
+      "bankName": "Bank of America",
+      "accountNumber": "112",
+      "transitNumber": "011401533",
+      "directDepositAccountTypeLookup": {
+        "id": 2,
+        "label": "Savings"
+      },
+      "paymentOrder": 2
+    },
+    {
+      "remainder": true,
+      "currencyUnit": {
+        "id": 166,
+        "minorUnits": 0
+      },
+      "bankName": "Wells Fargo",
+      "accountNumber": "113",
+      "transitNumber": "091000019",
+      "directDepositAccountTypeLookup": {
+        "id": 3,
+        "label": "Pay Card"
+      },
+      "paymentOrder": 3
+    }
+  ]
+}
+```
+
+Or an array of `directDepositAccounts` when providing `<candidateId>` on the command line.
+
+##### Update via inline JSON:
+
+```bash
+bullhorn service direct-deposit update 4152400 --data '{"candidate":{"id":4152400},"directDepositAccounts":[...]}'
+```
+
+##### Update a single account using CLI flags:
+
+```bash
+bullhorn service direct-deposit update 4152400 \
+  --bank "Chase Bank" \
+  --transit "021000021" \
+  --account "111" \
+  --type Checking \
+  --remainder
+```
+
+Options:
+- `-c, --candidate <id>`: Candidate ID (or pass as first argument)
+- `-f, --file <filePath>`: JSON file path (full payload or accounts array)
+- `-d, --data <jsonData>`: Inline JSON string
+- `--clear`: Clear all accounts for the candidate (sends empty account array)
+- `-b, --bank <name>`: Bank name
+- `-a, --account <num>`: Account number
+- `-t, --transit <num>` / `-r, --routing <num>`: Routing / transit number
+- `--type <type>`: `Checking`, `Savings`, or `Pay Card` (default: `Checking`)
+- `--amount <n>`: Fixed deposit dollar amount
+- `--remainder`: Flag account for remainder of pay
+- `--order <n>`: Payment order (default: 1)
+- `--currency-unit <id>`: Currency unit ID (default: 166 for USD)
+- `-X, --method <method>`: HTTP method: `POST` or `PUT` (default: `POST`)
+- `-o, --output <format>`: Output format: `table` or `json` (default: `table`)
+
+##### Inspect existing direct deposit accounts:
+
+```bash
+bullhorn service direct-deposit get 4152400
+bullhorn service direct-deposit get 4152400 -o json
+```
+
+#### Generic Service Call (`call` / `run` / `exec`)
+
+Call any Bullhorn business service endpoint (`/services/{serviceName}`):
+
+```bash
+bullhorn service call DirectDepositAccount -X POST -f payload.json
+```
+
+```bash
+bullhorn service call DirectDepositAccount -X POST -d '{"candidate":{"id":4152400},"directDepositAccounts":[...]}'
+```
+
 ## Configuration
 
 After login, the session is persisted locally via [`conf`](https://github.com/sindresorhus/conf). Sessions are automatically refreshed on expiry — no need to re-login frequently.

@@ -11,6 +11,7 @@ import createDeleteCommand from './commands/delete.js';
 import createEntitiesCommand from './commands/entities.js';
 import createMetaCommand from './commands/meta.js';
 import createQueryCommand from './commands/query.js';
+import createServiceCommand from './commands/service.js';
 
 const program = new Command();
 
@@ -28,6 +29,7 @@ program.addCommand(createDeleteCommand());
 program.addCommand(createEntitiesCommand());
 program.addCommand(createMetaCommand());
 program.addCommand(createQueryCommand());
+program.addCommand(createServiceCommand());
 
 program
   .command('test')
