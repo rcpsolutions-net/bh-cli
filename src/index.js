@@ -12,6 +12,21 @@ import createEntitiesCommand from './commands/entities.js';
 import createMetaCommand from './commands/meta.js';
 import createQueryCommand from './commands/query.js';
 import createServiceCommand from './commands/service.js';
+import createAssociateCommand from './commands/associate.js';
+import createDisassociateCommand from './commands/disassociate.js';
+import createSoftDeleteCommand from './commands/soft-delete.js';
+import createEntitlementsCommand from './commands/entitlements.js';
+import createAssociationCommand from './commands/association.js';
+import createDepartmentCommand from './commands/department.js';
+import createMyCommand from './commands/my.js';
+import createAllCorpNotesCommand from './commands/all-corp-notes.js';
+import createLoginInfoCommand from './commands/login-info.js';
+import createFileCommand from './commands/file.js';
+import createResumeCommand from './commands/resume.js';
+import createVersionCommand from './commands/version.js';
+import createDataHubCommand from './commands/data-hub.js';
+import createBulkUpdateCommand from './commands/bulk-update.js';
+import createPayBillCommand from './commands/pay-bill.js';
 
 const program = new Command();
 
@@ -30,6 +45,21 @@ program.addCommand(createEntitiesCommand());
 program.addCommand(createMetaCommand());
 program.addCommand(createQueryCommand());
 program.addCommand(createServiceCommand());
+program.addCommand(createAssociateCommand());
+program.addCommand(createDisassociateCommand());
+program.addCommand(createSoftDeleteCommand());
+program.addCommand(createEntitlementsCommand());
+program.addCommand(createAssociationCommand());
+program.addCommand(createDepartmentCommand());
+program.addCommand(createMyCommand());
+program.addCommand(createAllCorpNotesCommand());
+program.addCommand(createLoginInfoCommand());
+program.addCommand(createFileCommand());
+program.addCommand(createResumeCommand());
+program.addCommand(createVersionCommand());
+program.addCommand(createDataHubCommand());
+program.addCommand(createBulkUpdateCommand());
+program.addCommand(createPayBillCommand());
 
 program
   .command('test')

@@ -41,6 +41,35 @@ export default function createQueryCommand() {
       'Output format (table or json)',
       'table'
     )
+    .option(
+      '--effectiveOn <date>',
+      'Date to fetch the effective-dated version of the entity (YYYY-MM-DD format)'
+    )
+    .option(
+      '--layout <name>',
+      'Layout name to use for the response (e.g., "CandidateSummary")'
+    )
+    .option(
+      '--show-editable',
+      'Include editable field information in the response'
+    )
+    .option(
+      '--show-read-only',
+      'Include read-only field information in the response'
+    )
+    .option(
+      '--privateLabelId <id>',
+      'Filter by private label ID'
+    )
+    .option(
+      '--meta <level>',
+      'Include metadata (off, basic, or full)',
+      'off'
+    )
+    .option(
+      '--jsonp <name>',
+      'JSONP callback function name'
+    )
     .action(async (entityType, options) => {
       const spinner = ora(`Querying for ${entityType} records...`).start();
 
@@ -56,6 +85,39 @@ export default function createQueryCommand() {
         // Only add the orderBy parameter if the user provided it
         if (options.orderBy) {
           params.orderBy = options.orderBy;
+        }
+
+        // Add effectiveOn for effective-dated entities
+        if (options.effectiveOn) {
+          params.effectiveOn = options.effectiveOn;
+        }
+
+        // Add layout parameter
+        if (options.layout) {
+          params.layout = options.layout;
+        }
+
+        // Add showEditable/showReadOnly flags
+        if (options.showEditable) {
+          params.showEditable = true;
+        }
+        if (options.showReadOnly) {
+          params.showReadOnly = true;
+        }
+
+        // Add privateLabelId
+        if (options.privateLabelId) {
+          params.privateLabelId = options.privateLabelId;
+        }
+
+        // Add meta parameter
+        if (options.meta && options.meta !== 'off') {
+          params.meta = options.meta;
+        }
+
+        // Add JSONP callback
+        if (options.jsonp) {
+          params.callback = options.jsonp;
         }
 
         const response = await api.get(url, { params });

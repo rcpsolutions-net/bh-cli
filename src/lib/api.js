@@ -9,7 +9,10 @@ let BhRestToken = config.get('BhRestToken');
 const restUrl = config.get('restUrl');
 
 if (!BhRestToken || !restUrl) {
-  const isAuthCommand = process.argv.includes('auth') || process.argv.includes('entities');
+  const isAuthCommand = process.argv.includes('auth') || process.argv.includes('entities')
+    || process.argv.includes('department') || process.argv.includes('my')
+    || process.argv.includes('all-corp-notes') || process.argv.includes('login-info')
+    || process.argv.includes('file') || process.argv.includes('resume');
   const isHelpCommand = process.argv.includes('--help') || process.argv.includes('-h') || process.argv.includes('--version') || process.argv.includes('-V');
   const isTestEnv = process.env.NODE_ENV === 'test';
 
