@@ -27,6 +27,7 @@ import createVersionCommand from './commands/version.js';
 import createDataHubCommand from './commands/data-hub.js';
 import createBulkUpdateCommand from './commands/bulk-update.js';
 import createPayBillCommand from './commands/pay-bill.js';
+import createHelpCommand from './commands/help.js';
 
 const program = new Command();
 
@@ -60,6 +61,7 @@ program.addCommand(createVersionCommand());
 program.addCommand(createDataHubCommand());
 program.addCommand(createBulkUpdateCommand());
 program.addCommand(createPayBillCommand());
+program.addCommand(createHelpCommand());
 
 program
   .command('test')

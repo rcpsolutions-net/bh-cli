@@ -70,7 +70,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -113,7 +113,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -156,7 +156,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -199,7 +199,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -242,7 +242,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -285,7 +285,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -328,7 +328,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -371,7 +371,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -414,7 +414,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -457,7 +457,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -500,7 +500,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
@@ -543,7 +543,7 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data.data : response.data.data;
+        const data = id ? response.data : response.data.data;
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 

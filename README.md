@@ -722,7 +722,7 @@ bullhorn bulk-update Candidate --ids "123,456,789" status="Active" notes="Batch 
 
 ### Pay & Bill / Timesheet
 
-Manage Pay & Bill / Timesheet entities (AccountingPeriod, BillMaster, InvoiceStatement, Timesheet, etc.).
+Manage Pay & Bill / Timesheet entities (AccountingPeriod, BillMaster, InvoiceStatement, Timesheet, PayMaster, and 92+ sub-entities).
 
 ```bash
 bullhorn pay-bill <subcommand> get [id] [options]
@@ -740,6 +740,62 @@ Subcommands:
   sales-tax-rate                 SalesTaxRate (sales tax, 2024.6)
   timesheet                      Timesheet (timesheet entries, 2026.6)
   timesheet-entry                TimesheetEntry (timesheet line items, 2024.8)
+  # 92+ additional sub-entities:
+  batch-group                    BatchGroup
+  billing-profile                BillingProfile (and billing-profile-version)
+  billing-sync-batch             BillingSyncBatch (and billing-sync-batch-file-attachment, billing-sync-error)
+  bill-master-discount-rate      BillMasterDiscountRate
+  bill-master-surcharge-rate     BillMasterSurchargeRate
+  bill-master-transaction-discount-detail   BillMasterTransactionDiscountDetail
+  bill-master-transaction-discount-rate     BillMasterTransactionDiscountRate
+  bill-master-transaction-distribution-batch  BillMasterTransactionDistributionBatch
+  bill-master-transaction-sales-tax-detail    BillMasterTransactionSalesTaxDetail
+  bill-master-transaction-sales-tax-rate      BillMasterTransactionSalesTaxRate
+  bill-master-transaction-surcharge-detail    BillMasterTransactionSurchargeDetail
+  bill-master-transaction-surcharge-rate      BillMasterTransactionSurchargeRate
+  calendar                       Calendar (and calendar-frequency-lookup, calendar-instance)
+  city-sales-tax-rate            CitySalesTaxRate
+  client-corporation-bill-ruleset      ClientCorporationBillRuleset (and version)
+  client-corporation-pay-ruleset       ClientCorporationPayRuleset (and version)
+  client-corporation-rate-agreement-card    ClientCorporationRateAgreementCard (and line, line-group, version)
+  county-sales-tax-rate          CountySalesTaxRate
+  customer-required-field-configuration     CustomerRequiredFieldConfiguration (and version, version-option)
+  customer-required-field-option        CustomerRequiredFieldOption
+  discount-rate                  DiscountRate (and version)
+  district-sales-tax-rate        DistrictSalesTaxRate
+  earn-code                      EarnCode (and earn-code-group)
+  expense-sheet                  ExpenseSheet (and expense-sheet-entry)
+  general-ledger-segment         GeneralLedgerSegment (and segment-type, service-code)
+  holiday                        Holiday (and category-lookup, instance)
+  invoice-payment                InvoicePayment
+  invoice-statement-discount-rate            InvoiceStatementDiscountRate
+  invoice-statement-line-item         InvoiceStatementLineItem (and discount/sales-tax/surcharge-rate)
+  invoice-statement-sales-tax-rate      InvoiceStatementSalesTaxRate
+  invoice-statement-surcharge-rate      InvoiceStatementSurchargeRate
+  invoice-term-version           InvoiceTermVersion
+  job-code                       JobCode
+  job-order-bill-ruleset         JobOrderBillRuleset (and version)
+  job-order-pay-ruleset          JobOrderPayRuleset (and version)
+  job-order-rate-card            JobOrderRateCard (and line, line-group, version)
+  legal-business-entity          LegalBusinessEntity
+  other-sales-tax-rate           OtherSalesTaxRate
+  pay-master                     PayMaster (and pay-master-transaction)
+  placement-bill-ruleset         PlacementBillRuleset (and version)
+  placement-pay-ruleset          PlacementPayRuleset (and version)
+  placement-rate-card            PlacementRateCard (and line, version)
+  sales-tax-group                SalesTaxGroup (and sales-tax-rate-version)
+  state-sales-tax-rate           StateSalesTaxRate
+  surcharge-rate                 SurchargeRate (and version, version-earn-code)
+  time-labor-eval-rule           TimeLaborEvalRule (and template)
+  transaction-origin             TransactionOrigin
+  transaction-status             TransactionStatus
+  transaction-type               TransactionType
+  unbilled-revenue-distribution-batch  UnbilledRevenueDistributionBatch
+  pay-check                      PayCheck
+  placement-certification        PlacementCertification
+  placement-time-and-expense     PlacementTimeAndExpense (and change-request)
+  placement-commission           PlacementCommission
+  placement-shift-set            PlacementShiftSet
 
 Options:
   -f, --fields <list>    Comma-separated fields to return
@@ -760,6 +816,53 @@ bullhorn pay-bill timesheet --fields="id,candidateId,totalHours,amount" -c 50
 # List all invoice statements
 bullhorn pay-bill invoice-statement --where "status = 'Posted'" --orderBy "dateAdded DESC"
 ```
+
+### Help
+
+Look up Bullhorn API documentation and bh-cli command guidance for any entity.
+
+```bash
+bullhorn help [entityType] [options]
+
+Options:
+  -c, --commands       List all bh-cli commands
+  -e, --entities       List all supported Bullhorn entities (203)
+  -o, --output <format>  Output format: table (default) or json
+```
+
+```bash
+# List all supported entities (203 across 17 categories)
+bullhorn help --entities
+
+# Get entity-specific documentation and bh-cli commands
+bullhorn help Candidate
+bullhorn help PayMaster
+bullhorn help HousingComplex
+```
+
+The `--entities` flag displays all 203 supported Bullhorn REST API entities organized by category:
+
+| Category | Count | Examples |
+|---|---|---|
+| Core Staffing | 13 | Candidate, JobOrder, Placement, Lead |
+| Certification / Activity | 9 | ActivityGoal, Certification, CandidateCertification |
+| Candidate Addenda | 8 | CandidateEducation, CandidateReference, CandidateTaxInfo |
+| Lookup | 12 | BusinessSector, Category, Country |
+| Lookup / Reference | 8 | CustomAction, Deduction, EmployeePay, FederalTaxForm |
+| Pay & Bill | 15 | AccountingPeriod, BillMaster, InvoiceStatement, Timesheet |
+| Pay & Bill (sub-entities) | 92 | BillingProfile, Calendar, EarnCode, Holiday, PayMaster, SurchargeRate |
+| Staffing / HR | 20 | ClientCorporation, Shift, JobShift, ScreenerQuestion |
+| Housing | 5 | HousingComplex, HousingComplexUnit, UserHousingComplexUnit |
+| Effective-Dated | 4 | Location, LocationVersion, Branch, BranchGroup |
+| Business Services | 4 | CorporateUser, PlacementChangeRequest, BillableCharge |
+| Data Hub | 4 | EdsSourceSystem, EdsEntityType, EdsEntityTypeSchemaVersion, EdsData |
+| Tearsheets | 3 | Tearsheet, TearsheetMember, TearsheetRecipient |
+| Issue Tracking | 2 | Issue, IssueItems |
+| Workers Compensation | 2 | WorkersCompensation, WorkersCompensationRate |
+| Job Board | 1 | JobBoardPost |
+| Other | 1 | NoteEntity |
+
+Entity-specific help (`bh help <entityType>`) shows the entity's metadata fields and the recommended bh-cli commands for that entity (e.g., `bh pay-bill <subcommand>` for Pay & Bill entities, `bh version` for effective-dated entities).
 
 ## Common Options
 
@@ -815,7 +918,8 @@ The stored config contains your `BhRestToken`, `restUrl`, and `refreshToken`. Tr
 | Effective-Dated Entities | ✅ | `version` (list/create/update/delete) |
 | Data Hub | ✅ | `data-hub` (upsert/get/source-system/entity-type/schema-version) |
 | Bulk Update | ✅ | `bulk-update` |
-| Pay & Bill / Timesheet | ✅ | `pay-bill` (12 subcommands) |
+| Pay & Bill / Timesheet | ✅ | `pay-bill` (104 subcommands across 104 entities) |
+| Help / Entity Reference | ✅ | `help --entities` (203 entities), `help <entityType>` |
 | Query Enhancements | ✅ | `--layout`, `--meta`, `--jsonp`, `--effectiveOn`, `--show-editable`, `--show-read-only`, `--privateLabelId` |
 
 ## License

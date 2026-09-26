@@ -13,7 +13,10 @@ if (!BhRestToken || !restUrl) {
     || process.argv.includes('department') || process.argv.includes('my')
     || process.argv.includes('all-corp-notes') || process.argv.includes('login-info')
     || process.argv.includes('file') || process.argv.includes('resume');
-  const isHelpCommand = process.argv.includes('--help') || process.argv.includes('-h') || process.argv.includes('--version') || process.argv.includes('-V');
+  const isHelpCommand = process.argv.includes('--help') || process.argv.includes('-h')
+    || process.argv.includes('--version') || process.argv.includes('-V')
+    || process.argv.includes('--entities') || process.argv.includes('-e')
+    || process.argv.includes('help');
   const isTestEnv = process.env.NODE_ENV === 'test';
 
   if (!isAuthCommand && !isHelpCommand && !isTestEnv) {
