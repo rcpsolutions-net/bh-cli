@@ -1,4 +1,4 @@
-# bh-cli
+# bullhorn-cli
 
 A command-line interface for interacting with the [Bullhorn REST API](https://bullhorn.github.io/rest-api-docs/). Fetch, search, query, create, update, and delete Bullhorn entities directly from your terminal.
 
@@ -11,7 +11,7 @@ A command-line interface for interacting with the [Bullhorn REST API](https://bu
 
 ```bash
 git clone <repo-url>
-cd bh-cli
+cd bullhorn-cli
 npm install
 npm link
 ```
@@ -819,13 +819,13 @@ bullhorn pay-bill invoice-statement --where "status = 'Posted'" --orderBy "dateA
 
 ### Help
 
-Look up Bullhorn API documentation and bh-cli command guidance for any entity.
+Look up Bullhorn API documentation and bullhorn-cli command guidance for any entity.
 
 ```bash
 bullhorn help [entityType] [options]
 
 Options:
-  -c, --commands       List all bh-cli commands
+  -c, --commands       List all bullhorn-cli commands
   -e, --entities       List all supported Bullhorn entities (203)
   -o, --output <format>  Output format: table (default) or json
 ```
@@ -834,16 +834,15 @@ Options:
 # List all supported entities (203 across 17 categories)
 bullhorn help --entities
 
-# Get entity-specific documentation and bh-cli commands
+# Get entity-specific documentation and bullhorn-cli commands
 bullhorn help Candidate
 bullhorn help PayMaster
 bullhorn help HousingComplex
 ```
 
-The `--entities` flag displays all 203 supported Bullhorn REST API entities organized by category:
+The `--entities` flag displays all 203 supported Bullhorn REST API entities organized by category.
 
-| Category | Count | Examples |
-|---|---|---|
+Entity-specific help (`bullhorn help <entityType>`) shows the entity's metadata fields and the recommended bullhorn-cli commands for that entity (e.g., `bullhorn pay-bill <subcommand>` for Pay & Bill entities, `bullhorn version` for effective-dated entities).
 | Core Staffing | 13 | Candidate, JobOrder, Placement, Lead |
 | Certification / Activity | 9 | ActivityGoal, Certification, CandidateCertification |
 | Candidate Addenda | 8 | CandidateEducation, CandidateReference, CandidateTaxInfo |
@@ -862,7 +861,7 @@ The `--entities` flag displays all 203 supported Bullhorn REST API entities orga
 | Job Board | 1 | JobBoardPost |
 | Other | 1 | NoteEntity |
 
-Entity-specific help (`bh help <entityType>`) shows the entity's metadata fields and the recommended bh-cli commands for that entity (e.g., `bh pay-bill <subcommand>` for Pay & Bill entities, `bh version` for effective-dated entities).
+Entity-specific help (`bullhorn help <entityType>`) shows the entity's metadata fields and the recommended bullhorn-cli commands for that entity (e.g., `bullhorn pay-bill <subcommand>` for Pay & Bill entities, `bullhorn version` for effective-dated entities).
 
 ## Common Options
 

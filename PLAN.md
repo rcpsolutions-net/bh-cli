@@ -1,6 +1,6 @@
-# bh-cli AI-Friendly Refactor — Complete Plan
+# bullhorn-cli AI-Friendly Refactor — Complete Plan
 
-**Project**: `bh-cli` — Bullhorn REST API CLI tool. 31 source files, 6214 total lines. ESM modules (`"type": "module"`). Commander.js-based. 25 registered commands. Entry: `src/index.js`. Verified: `node src/index.js --help` runs successfully.
+**Project**: `bullhorn-cli` — Bullhorn REST API CLI tool. 31 source files, 6214 total lines. ESM modules (`"type": "module"`). Commander.js-based. 25 registered commands. Entry: `src/index.js`. Verified: `node src/index.js --help` runs successfully.
 
 ## Source Layout (31 files)
 
