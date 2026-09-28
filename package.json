@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "bin": {
-    "bullhorn": "bin/bullhorn.js"
+    "bullhorn": "bin/bullhorn.js",
+    "bh": "bin/bh.js"
   },
   "scripts": {
     "start": "node src/index.js"

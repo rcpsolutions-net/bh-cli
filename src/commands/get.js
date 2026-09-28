@@ -169,6 +169,11 @@ export default function createGetCommand() {
           // Single entity response: { data: {...} }
           const record = response.data.data;
 
+          if (!record) {
+            spinner.warn(chalk.yellow('No data returned from API.'));
+            return;
+          }
+
           spinner.succeed(chalk.green('Fetch successful!'));
 
           if (options.output === 'json') {
