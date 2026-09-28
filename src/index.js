@@ -21,7 +21,7 @@ import createDepartmentCommand from './commands/department.js';
 import createMyCommand from './commands/my.js';
 import createAllCorpNotesCommand from './commands/all-corp-notes.js';
 import createLoginInfoCommand from './commands/login-info.js';
-import createFileCommand from './commands/file.js';
+import createFileCommand from './commands/file/index.js';
 import createResumeCommand from './commands/resume/index.js';
 import createVersionCommand from './commands/version/index.js';
 import createDataHubCommand from './commands/data-hub/index.js';
