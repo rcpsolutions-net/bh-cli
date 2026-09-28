@@ -11,7 +11,7 @@ import createDeleteCommand from './commands/delete.js';
 import createEntitiesCommand from './commands/entities.js';
 import createMetaCommand from './commands/meta.js';
 import createQueryCommand from './commands/query.js';
-import createServiceCommand from './commands/service.js';
+import createServiceCommand from './commands/service/index.js';
 import createAssociateCommand from './commands/associate.js';
 import createDisassociateCommand from './commands/disassociate.js';
 import createSoftDeleteCommand from './commands/soft-delete.js';
