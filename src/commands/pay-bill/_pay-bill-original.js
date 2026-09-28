@@ -70,14 +70,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `AccountingPeriod${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -113,14 +113,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `AccountingPeriodSetting${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -156,14 +156,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `BillMaster${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -199,14 +199,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `BillMasterTransaction${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -242,14 +242,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `DirectDepositAccountTypeLookup${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -285,14 +285,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `InvoiceStatement${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -328,14 +328,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `InvoiceTerm${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -371,14 +371,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `PayableCharge${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -414,14 +414,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `PayBillCycle${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -457,14 +457,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `SalesTaxRate${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -500,14 +500,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `Timesheet${id ? '' : 's'}`);
         }
       } catch (error) {
@@ -543,14 +543,14 @@ export default function createPayBillCommand() {
         const params = buildParams(options);
 
         const response = await api.get(url, { params });
-        const data = id ? response.data : response.data.data;
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
 
         spinner.succeed(chalk.green(id ? 'Fetch successful!' : 'Listing complete!'));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          console.log(JSON.stringify(id ? data : data, null, 2));
         } else {
-          const records = id ? [data] : (data.data || []);
+          const records = id ? [data] : data;
           renderTable(records, `TimesheetEntry${id ? '' : 's'}`);
         }
       } catch (error) {
