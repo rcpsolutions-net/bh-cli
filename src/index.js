@@ -24,7 +24,7 @@ import createLoginInfoCommand from './commands/login-info.js';
 import createFileCommand from './commands/file.js';
 import createResumeCommand from './commands/resume.js';
 import createVersionCommand from './commands/version.js';
-import createDataHubCommand from './commands/data-hub.js';
+import createDataHubCommand from './commands/data-hub/index.js';
 import createBulkUpdateCommand from './commands/bulk-update.js';
 import createPayBillCommand from './commands/pay-bill/index.js';
 import createHelpCommand from './commands/help.js';

@@ -54,8 +54,10 @@ export default function createDataHubCommand() {
         if (records && records.length > 0) {
           for (const recStr of records) {
             const pairs = recStr.split(',').map(p => {
-              const [k, v] = p.split('=');
-              return [k.trim(), v ? v.trim() : ''];
+              const eqIdx = p.indexOf('=');
+              const k = p.substring(0, eqIdx);
+              const v = eqIdx >= 0 ? p.substring(eqIdx + 1) : '';
+              return [k.trim(), v.trim()];
             });
             const item = { sourceId: '' };
             for (const [k, v] of pairs) {
