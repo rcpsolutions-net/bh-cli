@@ -1,9 +1,10 @@
 // src/commands/resume.js
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
+import FormData from 'form-data';
 import api from '../lib/api.js';
 
 /**
@@ -96,7 +97,7 @@ export default function createResumeCommand() {
 
         if (options.output === 'base64') {
           if (options.destination) {
-            require('node:fs').writeFileSync(options.destination, data, 'base64');
+            writeFileSync(options.destination, data, 'base64');
             console.log(chalk.green(`Resume saved to ${options.destination}`));
           } else {
             process.stdout.write(data);
@@ -154,7 +155,6 @@ export default function createResumeCommand() {
         }
 
         // Bullhorn expects form-data with the file attached
-        const FormData = require('form-data');
         const formData = new FormData();
         formData.append('file', fileBuffer, { filename: fileName });
 
@@ -247,7 +247,6 @@ export default function createResumeCommand() {
       try {
         const url = '/resume/parseToHrXml';
 
-        const FormData = require('form-data');
         const formData = new FormData();
         formData.append('file', fileBuffer, { filename: fileName });
 
@@ -298,7 +297,6 @@ export default function createResumeCommand() {
       try {
         const url = '/resume/parseToHtml';
 
-        const FormData = require('form-data');
         const formData = new FormData();
         formData.append('file', fileBuffer, { filename: fileName });
 
@@ -353,7 +351,6 @@ export default function createResumeCommand() {
       try {
         const url = '/resume/parseToText';
 
-        const FormData = require('form-data');
         const formData = new FormData();
         formData.append('file', fileBuffer, { filename: fileName });
 

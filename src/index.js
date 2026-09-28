@@ -22,7 +22,7 @@ import createMyCommand from './commands/my.js';
 import createAllCorpNotesCommand from './commands/all-corp-notes.js';
 import createLoginInfoCommand from './commands/login-info.js';
 import createFileCommand from './commands/file.js';
-import createResumeCommand from './commands/resume.js';
+import createResumeCommand from './commands/resume/index.js';
 import createVersionCommand from './commands/version.js';
 import createDataHubCommand from './commands/data-hub/index.js';
 import createBulkUpdateCommand from './commands/bulk-update.js';
