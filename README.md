@@ -111,10 +111,10 @@ $ bullhorn create Candidate firstName="Jane" lastName="Doe" email="jane@acme.com
 
 ```mermaid
 flowchart LR
-    CLI["🖥 bullhorn\n25 commands"] --> API["🔌 api.js\naxios + token refresh"]
-    API --> BHAPI["☁️ Bullhorn REST API\nOAuth 2.0"]
+    CLI["🖥 bullhorn — 25 commands"] --> API["🔌 api.js — axios + auto token refresh"]
+    API --> BHAPI["☁️ Bullhorn REST API — OAuth 2.0"]
     BHAPI --> API
-    API --> CONF["📁 conf\nlocal storage"]
+    API --> CONF["📁 conf — local JSON storage"]
     
     subgraph Endpoints["Bullhorn API Endpoints"]
         E1["/entity/"]
