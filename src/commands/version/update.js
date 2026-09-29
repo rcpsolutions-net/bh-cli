@@ -2,10 +2,9 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { Command } from 'commander';
-import ora from 'ora';
 import chalk from 'chalk';
-import Table from 'cli-table3';
 import api from '../../lib/api.js';
+import { invoke, renderJsonOutput } from '../../lib/helpers.js';
 import { parseFieldArgs, formatVersionResult } from './_shared.js';
 
 export default function buildUpdateCommand(parent) {
@@ -41,26 +40,14 @@ export default function buildUpdateCommand(parent) {
 
       payload.versionId = Number(options.versionId);
 
-      const spinner = ora(`Updating version ${options.versionId} for ${entityType} ${entityId}...`).start();
-      try {
+      await invoke(async ({ chalk }) => {
         const response = await api.post(`/entity/${entityType}/${entityId}`, payload);
-        spinner.succeed(chalk.green(`Version ${options.versionId} updated for ${entityType}!`));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(response.data, null, 2));
+          renderJsonOutput(response.data);
         } else {
           formatVersionResult(response, `Version Updated for ${entityType}`);
         }
-      } catch (error) {
-        spinner.fail(chalk.red('Failed to update version.'));
-        if (error.response) {
-          const status = error.response.status;
-          const errorMsg = error.response.data?.errorMessage || 'No specific error message provided.';
-          console.error(chalk.red(`Error ${status}: ${errorMsg}`));
-        } else {
-          console.error(chalk.red('An unexpected error occurred:', error.message));
-        }
-        process.exit(1);
-      }
+      }, { spinnerMsg: `Updating version ${options.versionId} for ${entityType} ${entityId}...`, successMsg: `Version ${options.versionId} updated for ${entityType}!`, failMsg: 'Failed to update version.' });
     });
 }

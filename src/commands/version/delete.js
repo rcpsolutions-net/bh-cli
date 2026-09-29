@@ -1,9 +1,9 @@
 // src/commands/version/delete.js — Delete version subcommand.
 
 import { Command } from 'commander';
-import ora from 'ora';
 import chalk from 'chalk';
 import api from '../../lib/api.js';
+import { invoke, renderJsonOutput } from '../../lib/helpers.js';
 
 export default function buildDeleteCommand(parent) {
   parent.command('delete <entityType> <entityId>')
@@ -31,26 +31,15 @@ export default function buildDeleteCommand(parent) {
       }
 
       const payload = { versionId: Number(options.versionId) };
-      const spinner = ora(`Deleting version ${options.versionId} for ${entityType} ${entityId}...`).start();
-      try {
+
+      await invoke(async ({ chalk }) => {
         const response = await api.delete(`/entity/${entityType}/${entityId}`, { data: payload });
-        spinner.succeed(chalk.green(`Version ${options.versionId} deleted for ${entityType}!`));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(response.data, null, 2));
+          renderJsonOutput(response.data);
         } else {
           console.log(chalk.green(`Version ${options.versionId} successfully deleted for ${entityType} ${entityId}.`));
         }
-      } catch (error) {
-        spinner.fail(chalk.red('Failed to delete version.'));
-        if (error.response) {
-          const status = error.response.status;
-          const errorMsg = error.response.data?.errorMessage || 'No specific error message provided.';
-          console.error(chalk.red(`Error ${status}: ${errorMsg}`));
-        } else {
-          console.error(chalk.red('An unexpected error occurred:', error.message));
-        }
-        process.exit(1);
-      }
+      }, { spinnerMsg: `Deleting version ${options.versionId} for ${entityType} ${entityId}...`, successMsg: `Version ${options.versionId} deleted for ${entityType}!`, failMsg: 'Failed to delete version.' });
     });
 }

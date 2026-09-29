@@ -2,8 +2,8 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { Command } from 'commander';
 import chalk from 'chalk';
-import ora from 'ora';
 import api from '../../lib/api.js';
+import { invoke, renderJsonOutput } from '../../lib/helpers.js';
 import { renderChangesTable } from './_shared.js';
 
 export default function buildCallCommand() {
@@ -40,9 +40,7 @@ export default function buildCallCommand() {
         }
       }
 
-      const spinner = ora(`Calling /services/${serviceName} with ${method}...`).start();
-
-      try {
+      await invoke(async ({ chalk }) => {
         const url = `/services/${serviceName}`;
         let response;
         if (method === 'GET') {
@@ -55,23 +53,11 @@ export default function buildCallCommand() {
           response = await api.post(url, bodyData);
         }
 
-        spinner.succeed(chalk.green(`Service ${serviceName} call successful!`));
-
         if (options.output === 'table' && (Array.isArray(response.data) || typeof response.data === 'object')) {
           renderChangesTable(response.data);
         } else {
-          console.log(JSON.stringify(response.data, null, 2));
+          renderJsonOutput(response.data);
         }
-      } catch (error) {
-        spinner.fail(chalk.red(`Failed to call service ${serviceName}.`));
-        if (error.response) {
-          const status = error.response.status;
-          const errorMsg = error.response.data?.errorMessage || error.response.data?.message || JSON.stringify(error.response.data);
-          console.error(chalk.red(`Error ${status}: ${errorMsg}`));
-        } else {
-          console.error(chalk.red('An unexpected error occurred:', error.message));
-        }
-        process.exit(1);
-      }
+      }, { spinnerMsg: `Calling /services/${serviceName} with ${method}...`, successMsg: `Service ${serviceName} call successful!`, failMsg: `Failed to call service ${serviceName}.` });
     });
 }

@@ -5,6 +5,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import Table from 'cli-table3';
+import FormData from 'form-data';
 import api from '../lib/api.js';
 import inquirer from 'inquirer';
 

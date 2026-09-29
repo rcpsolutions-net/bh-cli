@@ -2,8 +2,9 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import ora from 'ora';
+import { invoke, buildGetParams, renderJsonOutput } from '../lib/helpers.js';
 import api from '../lib/api.js';
+import { buildAssociationUrl, flattenIds, renderChangeTable } from './all-corp-notes/_shared.js';
 
 /**
  * Creates the 'disassociate' command for removing to-many associations.
@@ -16,23 +17,10 @@ export default function createDisassociateCommand() {
     .argument('<entityId>', 'The numeric ID of the parent entity')
     .argument('<toManyFieldName>', 'The to-many association field name (e.g., primarySkills, notes)')
     .argument('<ids...>', 'Comma-separated or space-separated child entity IDs to disassociate')
-    .option(
-      '-f, --fields <list>',
-      'Comma-separated list of fields to return',
-      '*'
-    )
-    .option(
-      '-o, --output <format>',
-      'Output format (table or json)',
-      'json'
-    )
+    .option('-f, --fields <list>', 'Comma-separated list of fields to return', '*')
+    .option('-o, --output <format>', 'Output format (table or json)', 'json')
     .action(async (entityType, entityId, toManyFieldName, ids, options) => {
-      // Normalize: flatten comma-separated groups
-      const allIds = [];
-      for (const id of ids) {
-        const parts = String(id).split(',').filter(Boolean);
-        allIds.push(...parts);
-      }
+      const allIds = flattenIds(ids);
 
       if (allIds.length === 0) {
         console.error(chalk.red('Error: No IDs provided to disassociate.'));
@@ -40,54 +28,25 @@ export default function createDisassociateCommand() {
         process.exit(1);
       }
 
-      const spinner = ora(
-        `Disassociating ${allIds.length} ${toManyFieldName} from ${entityType} ${entityId}...`
-      ).start();
-
-      try {
-        const url = `/entity/${entityType}/${entityId}/${toManyFieldName}/${allIds.join(',')}`;
-        const params = { fields: options.fields };
+      invoke(async ({ chalk }) => {
+        const url = buildAssociationUrl(entityType, entityId, toManyFieldName, allIds);
+        const params = buildGetParams(options, { fields: options.fields });
 
         const response = await api.delete(url, { params });
-
-        spinner.succeed(chalk.green('Successfully disassociated records!'));
+        const changes = response.data;
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(response.data, null, 2));
+          renderJsonOutput(changes);
+        } else if (Array.isArray(changes)) {
+          await renderChangeTable(changes, toManyFieldName);
         } else {
-          const changes = response.data;
-          if (Array.isArray(changes)) {
-            console.log(
-              chalk.cyan.bold(`\nDisassociated ${changes.length} ${toManyFieldName} record(s):\n`)
-            );
-            const Table = (await import('cli-table3')).default;
-            const table = new Table({
-              head: [chalk.cyan.bold('#'), chalk.cyan.bold('Entity Type'), chalk.cyan.bold('Entity ID'), chalk.cyan.bold('Change Type')],
-            });
-            changes.forEach((item, index) => {
-              table.push([
-                index + 1,
-                item.changedEntityType || '-',
-                item.changedEntityId || '-',
-                chalk.green(item.changeType || '-'),
-              ]);
-            });
-            console.log(table.toString());
-          } else {
-            console.log(JSON.stringify(changes, null, 2));
-          }
+          renderJsonOutput(changes);
         }
-      } catch (error) {
-        spinner.fail(chalk.red(`Failed to disassociate ${toManyFieldName}.`));
-        if (error.response) {
-          const status = error.response.status;
-          const errorMsg = error.response.data?.errorMessage || 'No specific error message provided.';
-          console.error(chalk.red(`Error ${status}: ${errorMsg}`));
-        } else {
-          console.error(chalk.red('An unexpected error occurred:', error.message));
-        }
-        process.exit(1);
-      }
+      }, {
+        spinnerMsg: `Disassociating ${allIds.length} ${toManyFieldName} from ${entityType} ${entityId}...`,
+        successMsg: 'Successfully disassociated records!',
+        failMsg: `Failed to disassociate ${toManyFieldName}.`,
+      });
     });
 
   return disassociate;

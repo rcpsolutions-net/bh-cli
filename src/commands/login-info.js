@@ -15,24 +15,14 @@ import axios from 'axios';
 export default function createLoginInfoCommand() {
   const loginInfo = new Command('login-info')
     .alias('logininfo')
-    .description('Resolve data center information for a Bullhorn username (diagnostics).');
-
-  loginInfo
+    .description('Resolve data center information for a Bullhorn username (diagnostics).')
     .argument('<username>', 'Bullhorn username')
-    .option(
-      '-o, --output <format>',
-      'Output format (table or json)',
-      'json'
-    )
+    .option('-o, --output <format>', 'Output format (table or json)', 'json')
     .action(async (username, options) => {
       const spinner = ora(`Resolving data center for "${username}"...`).start();
 
       try {
-        const url = 'https://rest.bullhornstaffing.com/rest-services/loginInfo';
-        const params = { username };
-
-        // This call does NOT require authentication — uses public endpoint
-        const response = await axios.get(url, { params });
+        const response = await axios.get('https://rest.bullhornstaffing.com/rest-services/loginInfo', { params: { username } });
         const data = response.data;
 
         spinner.succeed(chalk.green('Data center resolved successfully!'));
@@ -41,16 +31,11 @@ export default function createLoginInfoCommand() {
           console.log(JSON.stringify(data, null, 2));
         } else {
           console.log(chalk.cyan.bold('\nData Center Information:\n'));
-          const table = new Table();
-          const entries = Object.entries(data).filter(([k, v]) => typeof v !== 'object');
-          for (const [key, value] of entries) {
-            table.push([chalk.bold(key), String(value ?? '')]);
-          }
-          // Also show nested objects as sub-entries
+          const table = new Table({ head: [chalk.cyan.bold('Field'), chalk.cyan.bold('Value')] });
+          // Flat values first, then nested objects as JSON strings
           for (const [key, value] of Object.entries(data)) {
-            if (typeof value === 'object' && value !== null) {
-              table.push([chalk.bold(key), JSON.stringify(value)]);
-            }
+            const cell = typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value ?? '');
+            table.push([chalk.bold(key), cell]);
           }
           console.log(table.toString());
         }

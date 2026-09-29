@@ -1,9 +1,9 @@
 // src/commands/file/detach.js — File detach subcommand.
 
 import { Command } from 'commander';
-import ora from 'ora';
 import chalk from 'chalk';
 import api from '../../lib/api.js';
+import { invoke, renderJsonOutput } from '../../lib/helpers.js';
 
 export default function buildDetachCommand(parent) {
   parent.command('detach <entityType> <entityId> <fileId>')
@@ -28,29 +28,14 @@ export default function buildDetachCommand(parent) {
         }
       }
 
-      const spinner = ora(`Detaching file ${fileId} from ${entityType} ${entityId}...`).start();
-
-      try {
-        const url = `/entity/${entityType}/${entityId}/fileAttachments/${fileId}`;
-        const response = await api.delete(url);
-
-        spinner.succeed(chalk.green('File detached successfully!'));
+      await invoke(async ({ chalk }) => {
+        const response = await api.delete(`/entity/${entityType}/${entityId}/fileAttachments/${fileId}`);
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(response.data, null, 2));
+          renderJsonOutput(response.data);
         } else {
           console.log(chalk.green(`File ${fileId} detached from ${entityType} ${entityId}.`));
         }
-      } catch (error) {
-        spinner.fail(chalk.red('Failed to detach file.'));
-        if (error.response) {
-          const status = error.response.status;
-          const errorMsg = error.response.data?.errorMessage || 'No specific error message provided.';
-          console.error(chalk.red(`Error ${status}: ${errorMsg}`));
-        } else {
-          console.error(chalk.red('An unexpected error occurred:', error.message));
-        }
-        process.exit(1);
-      }
+      }, { spinnerMsg: `Detaching file ${fileId} from ${entityType} ${entityId}...`, successMsg: 'File detached successfully!', failMsg: 'Failed to detach file.' });
     });
 }

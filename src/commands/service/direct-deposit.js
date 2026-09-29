@@ -1,9 +1,8 @@
 // src/commands/service/direct-deposit.js
 import { Command } from 'commander';
 import chalk from 'chalk';
-import ora from 'ora';
-import Table from 'cli-table3';
 import api from '../../lib/api.js';
+import { invoke, renderJsonOutput, renderTableOutput } from '../../lib/helpers.js';
 import { renderChangesTable, resolveAccountType, buildDirectDepositPayload } from './_shared.js';
 
 export default function buildDirectDepositCommand() {
@@ -40,11 +39,9 @@ export default function buildDirectDepositCommand() {
         process.exit(1);
       }
 
-      // 3. Send API request
       const method = (options.method || 'POST').toUpperCase();
-      const spinner = ora(`Sending DirectDepositAccount update for candidate ${payload.candidate.id} via ${method}...`).start();
 
-      try {
+      await invoke(async ({ chalk }) => {
         const url = '/services/DirectDepositAccount';
         let response;
         if (method === 'PUT') {
@@ -53,25 +50,13 @@ export default function buildDirectDepositCommand() {
           response = await api.post(url, payload);
         }
 
-        spinner.succeed(chalk.green('Direct deposit update successful!'));
-
         if (options.output === 'json') {
-          console.log(JSON.stringify(response.data, null, 2));
+          renderJsonOutput(response.data);
         } else {
           console.log(chalk.cyan.bold(`\nDirect Deposit Changes for Candidate ${payload.candidate.id}:\n`));
           renderChangesTable(response.data);
         }
-      } catch (error) {
-        spinner.fail(chalk.red('Failed to update DirectDepositAccount.'));
-        if (error.response) {
-          const status = error.response.status;
-          const errorMsg = error.response.data?.errorMessage || error.response.data?.message || JSON.stringify(error.response.data);
-          console.error(chalk.red(`Error ${status}: ${errorMsg}`));
-        } else {
-          console.error(chalk.red('An unexpected error occurred:', error.message));
-        }
-        process.exit(1);
-      }
+      }, { spinnerMsg: `Sending DirectDepositAccount update for candidate ${payload.candidate.id} via ${method}...`, successMsg: 'Direct deposit update successful!', failMsg: 'Failed to update DirectDepositAccount.' });
     });
 
   // Subcommand: get
@@ -79,9 +64,7 @@ export default function buildDirectDepositCommand() {
     .description('Retrieve current direct deposit accounts for a candidate.')
     .option('-o, --output <format>', 'Output format: table or json', 'table')
     .action(async (candidateId, options) => {
-      const spinner = ora(`Fetching direct deposit accounts for candidate ${candidateId}...`).start();
-
-      try {
+      await invoke(async ({ chalk }) => {
         const response = await api.get('/query/DirectDepositAccount', {
           params: {
             where: `candidate.id = ${candidateId}`,
@@ -90,57 +73,25 @@ export default function buildDirectDepositCommand() {
         });
 
         const records = response.data?.data || [];
-        spinner.succeed(chalk.green(`Fetched ${records.length} direct deposit account(s).`));
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(records, null, 2));
+          renderJsonOutput(records);
+        } else if (records.length === 0) {
+          console.log(chalk.yellow(`No direct deposit accounts found for candidate ${candidateId}.`));
         } else {
-          if (records.length === 0) {
-            console.log(chalk.yellow(`No direct deposit accounts found for candidate ${candidateId}.`));
-            return;
-          }
-
           console.log(chalk.cyan.bold(`\nDirect Deposit Accounts for Candidate ${candidateId}:\n`));
-          const table = new Table({
-            head: [
-              chalk.cyan.bold('ID'),
-              chalk.cyan.bold('Bank'),
-              chalk.cyan.bold('Routing #'),
-              chalk.cyan.bold('Account #'),
-              chalk.cyan.bold('Type'),
-              chalk.cyan.bold('Amount'),
-              chalk.cyan.bold('Remainder'),
-              chalk.cyan.bold('Order'),
-            ],
-          });
-
-          for (const acc of records) {
-            const typeLabel = acc.directDepositAccountTypeLookup?.label || acc.directDepositAccountTypeLookup || '-';
-            table.push([
-              acc.id || '-',
-              acc.bankName || '-',
-              acc.transitNumber || '-',
-              acc.accountNumber || '-',
-              typeLabel,
-              acc.amount !== undefined && acc.amount !== null ? `$${acc.amount}` : '-',
-              acc.remainder ? chalk.green('true') : 'false',
-              acc.paymentOrder ?? '-',
-            ]);
-          }
-
-          console.log(table.toString());
+          renderTableOutput(records, null, (record) => [
+            record.id || '-',
+            record.bankName || '-',
+            record.transitNumber || '-',
+            record.accountNumber || '-',
+            record.directDepositAccountTypeLookup?.label || record.directDepositAccountTypeLookup || '-',
+            record.amount !== undefined && record.amount !== null ? `$${record.amount}` : '-',
+            record.remainder ? chalk.green('true') : 'false',
+            record.paymentOrder ?? '-',
+          ]);
         }
-      } catch (error) {
-        spinner.fail(chalk.red('Failed to fetch direct deposit accounts.'));
-        if (error.response) {
-          const status = error.response.status;
-          const errorMsg = error.response.data?.errorMessage || JSON.stringify(error.response.data);
-          console.error(chalk.red(`Error ${status}: ${errorMsg}`));
-        } else {
-          console.error(chalk.red('An unexpected error occurred:', error.message));
-        }
-        process.exit(1);
-      }
+      }, { spinnerMsg: `Fetching direct deposit accounts for candidate ${candidateId}...`, successMsg: 'Done.', failMsg: 'Failed to fetch direct deposit accounts.' });
     });
 
   return dd;

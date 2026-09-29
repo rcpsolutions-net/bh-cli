@@ -3,6 +3,7 @@
 
 import chalk from 'chalk';
 import Table from 'cli-table3';
+import api from '../../lib/api.js';
 
 /** Build query params from common options and optional extras. */
 export function buildParams(options, extraParams = {}) {
@@ -36,4 +37,50 @@ export function renderTable(records, label) {
     );
   }
   console.log(table.toString());
+}
+
+// ── Generic "get [id]" endpoint factory ───────────────────────────────
+
+/**
+ * Create a parent subcommand with a standard `get [id]` subcommand.
+ * Usage:
+ *   const cmd = buildGetEndpoint(parent, 'timesheet', { entityName: 'Timesheet' });
+ */
+export function buildGetEndpoint(parent, name, { entityName, pluralEntityName, fieldsDefault = '', successMsgs } = {}) {
+  const cmd = parent.command(name).description(`Manage ${entityName || name} entities.`);
+
+  const getCmd = cmd.command('get [id]')
+    .description(`Get a ${entityName || name} by ID, or list all.`)
+    .option('-f, --fields <list>', 'Comma-separated list of fields to return', fieldsDefault)
+    .option('-c, --count <number>', 'Number of records to return', '25')
+    .option('--start <number>', 'Starting index for pagination', '0')
+    .option('--orderBy <field>', 'Field to sort by (add DESC for descending)')
+    .option('--where <sqlWhere>', 'SQL-like WHERE clause')
+    .option('-o, --output <format>', 'Output format (table or json)', 'table')
+    .action(async (id, options) => {
+      const helpers = await import('../../lib/helpers.js');
+      const msgIdx = id ? 0 : 1;
+      const msgs = successMsgs || { single: 'Fetch successful!', plural: 'Listing complete!' };
+
+      await helpers.invoke(async ({ chalk }) => {
+        const url = id ? `/entity/${entityName || name}/${id}` : `/query/${entityName || name}`;
+        const params = buildParams(options);
+
+        const response = await api.get(url, { params });
+        const data = id ? (response.data?.data ?? response.data) : (response.data?.data || []);
+
+        if (options.output === 'json') {
+          helpers.renderJsonOutput(data);
+        } else {
+          const records = id ? [data] : data;
+          renderTable(records, `${entityName || name}${id ? '' : 's'}`);
+        }
+      }, {
+        spinnerMsg: id ? `Fetching ${entityName || name} ${id}...` : `Listing ${(entityName || name) + 's'}...`,
+        successMsg: msgs[msgIdx] || msgs.single || msgs.plural,
+        failMsg: `Failed to fetch ${entityName || name}.`,
+      });
+    });
+
+  return getCmd;
 }

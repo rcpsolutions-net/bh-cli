@@ -2,9 +2,9 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { Command } from 'commander';
-import ora from 'ora';
 import chalk from 'chalk';
 import api from '../../lib/api.js';
+import { invoke, renderJsonOutput } from '../../lib/helpers.js';
 import { formatUploadResult } from './_shared.js';
 
 export default function buildUploadCommand(parent) {
@@ -30,37 +30,21 @@ export default function buildUploadCommand(parent) {
       const fileName = options.name || filePath.split('/').pop() || 'unnamed';
       const mimeType = options.type || 'application/octet-stream';
 
-      const spinner = ora(`Uploading file "${fileName}" to ${entityType} ${entityId}...`).start();
+      const payload = {
+        entityId: Number(entityId),
+        fileName,
+        mimeType,
+        fileData: base64Data,
+      };
 
-      try {
-        const url = `/file/${entityType}`;
-        const payload = {
-          entityId: Number(entityId),
-          fileName,
-          mimeType,
-          fileData: base64Data,
-        };
-
-        const response = await api.put(url, payload);
-        const data = response.data;
-
-        spinner.succeed(chalk.green(`File "${fileName}" uploaded successfully!`));
+      await invoke(async ({ chalk }) => {
+        const response = await api.put(`/file/${entityType}`, payload);
 
         if (options.output === 'json') {
-          console.log(JSON.stringify(data, null, 2));
+          renderJsonOutput(response.data);
         } else {
-          formatUploadResult(data, fileName);
+          formatUploadResult(response.data, fileName);
         }
-      } catch (error) {
-        spinner.fail(chalk.red('Failed to upload file.'));
-        if (error.response) {
-          const status = error.response.status;
-          const errorMsg = error.response.data?.errorMessage || 'No specific error message provided.';
-          console.error(chalk.red(`Error ${status}: ${errorMsg}`));
-        } else {
-          console.error(chalk.red('An unexpected error occurred:', error.message));
-        }
-        process.exit(1);
-      }
+      }, { spinnerMsg: `Uploading file "${fileName}" to ${entityType} ${entityId}...`, successMsg: `File "${fileName}" uploaded successfully!`, failMsg: 'Failed to upload file.' });
     });
 }
