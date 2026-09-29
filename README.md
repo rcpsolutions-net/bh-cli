@@ -109,18 +109,34 @@ $ bullhorn create Candidate firstName="Jane" lastName="Doe" email="jane@acme.com
 
 ## Architecture
 
-```
-┌──────────────┐     ┌─────────────┐     ┌──────────────────┐
-│   bullhorn   │────▶│  api.js     │────▶│ Bullhorn REST    │
-│              │     │             │     │ API (OAuth 2.0)  │
-│  25 cmds    │◀────│ axios +     │◀────│ /entity/          │
-│              │     │ token refresh│     │ /services/        │
-└──────────────┘     └─────────────┘     │ /massUpdate/      │
-                                          │ /data-hub/        │
-                                          └──────────────────┘
-
-  Auth → conf (local JSON storage)   Token → auto-refresh on 401
-  Output → table (default) / JSON   Progress → ora spinners
+```mermaid
+flowchart LR
+    CLI["🖥 bullhorn
+25 commands"] --> API["🔌 api.js
+axios + token refresh"]
+    API --> BHAPI["☁️ Bullhorn REST API
+OAuth 2.0"]
+    BHAPI --> API
+    API --> CONF["📁 conf
+local JSON storage"]
+    
+    subgraph Endpoints["Bullhorn API Endpoints"]
+        E1["/entity/"]
+        E2["/services/"]
+        E3["/massUpdate/"]
+        E4["/data-hub/"]
+    end
+    
+    API --> Endpoints
+    CLI -.-> "🔐 auth
+📥 get
+🔍 search
+⚙️ services"
+    
+    style CLI fill:#1a1b26,color:#f0f0f0
+    style API fill:#161b22,color:#7dd3fc
+    style BHAPI fill:#0f172a,color:#86efac
+    style Endpoints fill:#1e293b,color:#fbbf24
 ```
 
 ---
