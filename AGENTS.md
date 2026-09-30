@@ -75,6 +75,13 @@ src/commands/<group>/
 
 **Barrel rules**: `index.js` must import from concrete files (`./sub-a.js`), never through another barrel. Internal sibling imports also bypass barrels.
 
+## Why DRY + Barrel
+
+- **DRY** — Subcommands share the same API call shape, output helpers (`renderTableOutput`, `renderJsonOutput`), and error handling (`formatApiError`). Without shared helpers, every subcommand copies ~20 lines → bug fixes must happen in N places. With `_shared.js`, fix once.
+- **Barrel** — Without a barrel, `src/index.js` would need ~80 scattered imports. The barrel keeps it at ~30, makes the command tree discoverable per group, and lets you add/remove subcommands by touching one directory.
+
+Together: barrel reduces **surface area**, DRY reduces **duplication**.
+
 ### Lib modules
 - `api.js` — singleton Axios instance with 401 interceptor (triggers token refresh).
 - `auth.js` — login, logout, `handleTokenRefresh`.
