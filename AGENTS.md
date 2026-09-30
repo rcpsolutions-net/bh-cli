@@ -61,19 +61,19 @@ export default function createGetCommand() {
 
 Imported in `src/index.js` as `createXCommand` → `program.addCommand(createXCommand())`.
 
-### Subcommand groups (directory + barrel)
+### Subcommand groups (directory + dryBarrel)
 Commands with many subcommands use a directory layout:
 
 ```
 src/commands/<group>/
-├── index.js       # barrel — imports all subcommand builders, creates parent Command, adds them via addCommand()
+├── index.js       # dryBarrel — imports all subcommand builders, creates parent Command, adds them via addCommand()
 ├── sub-a.js       # export default function buildSubACommand() { ... }
 ├── sub-b.js
 ├── _shared.js     # shared helpers/types (prefixed with _)
 └── _<group>-original.js  # legacy single-file (kept for reference)
 ```
 
-**Barrel rules**: `index.js` must import from concrete files (`./sub-a.js`), never through another barrel. Internal sibling imports also bypass barrels.
+**dryBarrel rules**: `index.js` must import from concrete files (`./sub-a.js`), never through another dryBarrel. Internal sibling imports also bypass dryBarrels.
 
 ### Lib modules
 - `api.js` — singleton Axios instance with 401 interceptor (triggers token refresh).
@@ -88,7 +88,7 @@ src/commands/<group>/
 ## Workflow
 
 1. **Add a command** — single-file: create `src/commands/<name>.js`, export default builder, add import + `program.addCommand()` in `src/index.js`.
-2. **Add a subcommand group** — create directory under `src/commands/`, add barrel `index.js` + subcommand files, update `src/index.js`.
+2. **Add a subcommand group** — create directory under `src/commands/`, add dryBarrel `index.js` + subcommand files, update `src/index.js`.
 3. **Verify**: `node src/index.js --help` lists all commands; test with `bh <command> --help`.
 4. **No lint/test configured** — manual `--help` smoke test is the verification standard.
 
