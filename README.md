@@ -94,9 +94,9 @@ $ bullhorn search JobOrder -q "isOpen:1" --fields=id,title,dateAdded -s "-dateAd
   ┌──────┬─────────────────────────────────┬──────────────┐
   │ Id   │ Title                           │ Date Added   │
   ├──────┼─────────────────────────────────┼──────────────┤
-  │ 7891 │ Senior Backend Engineer          │ 2026-09-25   │
-  │ 7884 │ Full-Stack TypeScript Dev        │ 2026-09-23   │
-  │ 7870 │ DevOps Platform Lead             │ 2026-09-20   │
+  │ 7891 │ Senior Backend Engineer         │ 2026-09-25   │
+  │ 7884 │ Full-Stack TypeScript Dev       │ 2026-09-23   │
+  │ 7870 │ DevOps Platform Lead            │ 2026-09-20   │
   └──────┴─────────────────────────────────┴──────────────┘
 
 $ bullhorn create Candidate firstName="Jane" lastName="Doe" email="jane@acme.com" owner.id=100
