@@ -1,4 +1,4 @@
-# bullhornh-cli — Missing Features Plan (Bullhorn REST API)
+# bullhornh-cli — Features Plan (Bullhorn REST API)
 
 Generated: 2026-09-25
 
@@ -48,8 +48,6 @@ Generated: 2026-09-25
 | .env pre-fill | auth login | ✅ Done |
 
 ---
-
-## Missing — Priority 1 (Core API Operations)
 
 ### 1.1 `bullhorn entity <entityType> <entityId> --get` (single)
 Already exists as `bullhorn get`. **No change needed.**
@@ -115,8 +113,6 @@ bullhorn association Candidate primarySkills --ids 123,456,789
 
 ---
 
-## Missing — Priority 2 (Department / My Operations)
-
 ### 2.1 Department entities
 ```bash
 bullhorn department-candidates [options]
@@ -142,8 +138,6 @@ bullhorn my-notes [options]
 - ✅ **DONE** — `src/commands/my.js` added, subcommands: candidates, client-contacts, placements, notes; supports --fields, --count, --start, --sort, --where, --query, --departmentIds, --output
 
 ---
-
-## Missing — Priority 3 (Specialized API Endpoints)
 
 ### 3.1 All Corp Notes
 ```bash
@@ -184,8 +178,6 @@ bullhorn file-attachments Candidate 123
 
 ---
 
-## Missing — Priority 4 (Effective-Dated Entities)
-
 ### 4.1 Create version
 - API: `POST /entity/{entityType}` (new version on existing root)
 - Body: version fields (no root fields like clientCorporation)
@@ -214,8 +206,6 @@ bullhorn file-attachments Candidate 123
 **Effective-dated entities include:** Location, LocationGroup, Branch, BranchGroup, CustomObject1-35, and any custom object configured as effective-dated.
 
 ---
-
-## Missing — Priority 5 (Business Services)
 
 ### 5.1 CorporateUser service
 - API: `POST/PUT /services/CorporateUser`
@@ -268,8 +258,6 @@ bullhorn file-attachments Candidate 123
 
 ---
 
-## Missing — Priority 6 (Data Hub)
-
 ### 6.1 Data Hub — Upsert data
 - API: `POST /data-hub/data` (up to 100 records)
 - ✅ **DONE** — `bullhorn data-hub upsert` (supports --file, --data, --source-system, --entity-type, --schema-version, key=value records)
@@ -291,8 +279,6 @@ bullhorn file-attachments Candidate 123
 - ✅ **DONE** — `bullhorn data-hub schema-version create|get <schemaVersionId>` (supports --file, --data, --entity-type, --source-system, --name, --schema, --description)
 
 ---
-
-## Missing — Priority 7 (Entity-Specific Enhancements)
 
 ### 7.1 Bulk operations
 ```bash
