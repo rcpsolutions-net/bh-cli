@@ -1,4 +1,4 @@
-# bh-cli — Missing Features Plan (Bullhorn REST API)
+# bullhornh-cli — Missing Features Plan (Bullhorn REST API)
 
 Generated: 2026-09-25
 
@@ -35,10 +35,10 @@ Generated: 2026-09-25
 | Resume Parsing | `bh resume parse-to-candidate|hrxml|html|text` | ✅ Done (4 new subcommands, form-data) |
 | Pay & Bill / Timesheet | `bh pay-bill <subcommand>` | ✅ Done (12 subcommands for 12 entities) |
 | Layout Parameter | `bh get|search|query --layout <name>` | ✅ Done (added to 3 commands) |
-| Show Editable/Read-Only | `bh get|search|query --show-editable|--show-read-only` | ✅ Done (added to 3 commands) |
-| Private Label Filtering | `bh get|search|query --privateLabelId <id>` | ✅ Done (added to 3 commands) |
-| Meta Parameter | `bh get|search|query --meta <level>` | ✅ Done (added to 3 commands, default: off) |
-| JSONP Support | `bh get|search|query --jsonp <name>` | ✅ Done (added to 3 commands, maps to callback) |
+| Show Editable/Read-Only | `bh get-search-query --show-editable --show-read-only` | ✅ Done (added to 3 commands) |
+| Private Label Filtering | `bh get-search-query --privateLabelId <id>` | ✅ Done (added to 3 commands) |
+| Meta Parameter | `bh get-search-query --meta <level>` | ✅ Done (added to 3 commands, default: off) |
+| JSONP Support | `bh get-search-query --jsonp <name>` | ✅ Done (added to 3 commands, maps to callback) |
 | Pagination (start/count) | all search/query/get | ✅ Done |
 | Field selection (fields=) | all search/query/get | ✅ Done |
 | Sorting (orderBy/sort) | search, query | ✅ Done |
