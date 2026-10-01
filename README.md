@@ -13,6 +13,7 @@
 
 <!-- Badges -->
 
+![Status: Beta](https://img.shields.io/badge/Status-Beta-orange?style=flat-square)
 [![npm version](https://img.shields.io/npm/v/bh-cli.svg?style=flat-square&colorA=1a1b26&colorB=7aa2f7)](https://www.npmjs.com/package/bh-cli)
 [![Node.js >= 22](https://img.shields.io/badge/Node.js-%3E%3D22.0.0-3DA643?style=flat-square&logo=node.js)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-6BCBFB?style=flat-square)](LICENSE)
